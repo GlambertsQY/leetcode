@@ -908,8 +908,11 @@ public:
     }
 
     //268. Missing Number
+    //交换：swap进行n次，实际为O(n)
+    //异或：增加n个数，结果有2n+1个数。连续异或之后，剩下一个不存在的数。
     int missingNumber(vector<int>& nums) {
         nums.push_back(-1);
+        int numOfSwap = 0;
         for (int j = 0; j < nums.size(); j++) {
             for (int i = 0; i < nums.size(); i++) {
                 if (nums[i] == -1) {
@@ -919,6 +922,7 @@ public:
                     int t = nums[nums[i]];
                     nums[nums[i]] = nums[i];
                     nums[i] = t;
+                    numOfSwap++;
                 }
             }
         }
@@ -929,7 +933,221 @@ public:
         }
         return 0;
     }
+
+    //278. First Bad Version
+    int firstBadVersion(int n) {
+        int l = 1, h = n;
+        while (l <= h) {
+            long long mid = (l + h) / 2; //l+ (h-l)/2 防止l+h溢出
+            int r1 = isBadVersion(mid);
+            if (mid == 1 && r1 == 1) {
+                return 1;
+            }
+            int r2 = isBadVersion(mid - 1);
+            if (r1 == 1 && r2 == 0) {
+                return mid;
+            } else if(r1==1){
+                h = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    //283. Move Zeroes
+    void moveZeroes(vector<int>& nums) {
+        int numOfZero = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == 0) {
+                numOfZero++;
+            } else {
+                nums[i - numOfZero] = nums[i];
+            }
+        }
+        for (int i = nums.size() - numOfZero; i < nums.size(); i++) {
+            nums[i] = 0;
+        }
+    }
+
+    //290. Word Pattern
+    //bijection：双向映射
+    bool wordPattern(string pattern, string s) {
+        vector<string> vs = stringToVector_string(s);
+        if (pattern.size() != vs.size()) {
+            return 0;
+        }
+        map<char, string> m;
+        map<string, char> m2;
+        for (int i = 0; i < pattern.size(); i++) {
+            if (m.find(pattern[i]) == m.end()) {
+                if (m2.find(vs[i]) != m2.end()) {
+                    return 0;
+                }
+                m2[vs[i]] = pattern[i];
+                m[pattern[i]] = vs[i];
+            } else {
+                if (m[pattern[i]] != vs[i]) {
+                    return 0;
+                }
+            }
+        }
+        return 1;
+    }
+
+    //292. Nim Game 博弈论
+    //动态规划 1-3 4 5-7 8 9-11
+    bool canWinNim(int n) {
+        return !(n % 4 == 0);
+    }
+
+    //303. Range Sum Query - Immutable
+    // sumRange(i,j)=sums[j+1]−sums[i] 简化求和
+    class NumArray {
+    public:
+        vector<int> v;
+        NumArray(vector<int>& nums) {
+            int sum = 0;
+            v.push_back(0);
+            for (int i = 0; i < nums.size(); i++) {
+                sum += nums[i];
+                v.push_back(sum);
+            }
+        }
+
+        int sumRange(int left, int right) {
+            return v[right + 1] - v[left];
+        }
+    };
+
+    //326. Power of Three
+    bool isPowerOfThree(int n) {
+        while (true) {
+            if (n <= 0) {
+                return 0;
+            }
+            if (n == 1) {
+                return 1;
+            }
+            if (n % 3 != 0) {
+                return 0;
+            }
+            n /= 3;
+        }
+        return 0;
+    }
+
+    //338. Counting Bits
+    vector<int> countBits(int n) {
+        vector<int> res = {};
+        for (int i = 0; i <= n; i++) {
+            int j = i;
+            int sum = 0;
+            while (j != 0) {
+                if (j % 2 != 0) {
+                    sum++;
+                }
+                j /= 2;
+            }
+            res.push_back(sum);
+        }
+        return res;
+    }
+
+    //342. Power of Four
+    bool isPowerOfFour(int n) {
+        while (true) {
+            if (n <= 0) {
+                return 0;
+            }
+            if (n == 1) {
+                return 1;
+            }
+            if (n % 4 != 0) {
+                return 0;
+            }
+            n /= 4;
+        }
+        return 0;
+    }
+
+    //344. Reverse String
+    void reverseString(vector<char>& s) {
+        int l = 0, h = s.size() - 1;
+        while (l < h) {
+            char t = s[l];
+            s[l] = s[h];
+            s[h] = t;
+            l++;
+            h--;
+        }
+    }
+
+    //345. Reverse Vowels of a String
+    string reverseVowels(string s) {
+        string pattern = "aeiouAEIOU";
+        int l = 0, h = s.size() - 1;
+        vector<int> v;
+        while (l < h) {
+            int b1 = findChar(pattern, s[l]);
+            int b2 = findChar(pattern, s[h]);
+            if (b1 && b2) {
+                char t = s[l];
+                s[l] = s[h];
+                s[h] = t;
+                l++;
+                h--;
+            } else {
+                if (b1) {
+                    h--;
+                } else if (b2) {
+                    l++;
+                } else {
+                    l++;
+                    h--;
+                }
+            }
+            
+        }
+        return s;
+    }
+
+    //349. Intersection of Two Arrays
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res = {};
+        map<int, int> m;
+        map<int, int> m2;
+        for (int i = 0; i < nums1.size(); i++) {
+            m[nums1[i]] = -1;
+        }
+        for (int i = 0; i < nums2.size(); i++) {
+            if (m.find(nums2[i]) != m.end()) {
+                if (m2.find(nums2[i]) == m2.end()) {
+                    res.push_back(nums2[i]);
+                }
+                m2[nums2[i]] = -1;
+            }
+        }
+        return res;
+    }
+
+    //350. Intersection of Two Arrays II
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res = {};
+        map<int, int> m;
+        for (int i = 0; i < nums1.size(); i++) {
+            m[nums1[i]] = -1;
+        }
+        for (int i = 0; i < nums2.size(); i++) {
+            if (m.find(nums2[i]) != m.end()) {
+                res.push_back(nums2[i]);
+            }
+        }
+        return res;
+    }
 };
+
+
 
 
 
@@ -938,7 +1156,7 @@ public:
 int main() {
     vector<int> v1 = { 2,2,1 };
     vector<int> v2 = { 2,5,6 };
-    vector<int> v = { 0,3,5,8,4,6,1,9,7 };
+    vector<int> v = { -2, 0, 3, -5, 2, -1 };
     ListNode* h1 = createListNode_rear("1,1");
     ListNode* h2 = createListNode_rear("5,6");
     mergeLinkList(h1, h2);
@@ -948,6 +1166,6 @@ int main() {
     TreeNode* head = createTree("37,-34,-48,null,-100,-100,48,null,null,null,null,-54,null,-71,-22,null,null,null,8");
     TreeNode* p1 = new TreeNode(4);
     TreeNode* p2 = new TreeNode(7);
-    s.missingNumber(v);
+    v = s.countBits(2);
     return 0;
 }

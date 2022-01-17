@@ -47,6 +47,21 @@ vector<int> stringToVector_int(string s) {
 	return res;
 }
 
+vector<string> stringToVector_string(string s) {
+	vector<string> res = {};
+	string t = "";
+	for (int i = 0; i < s.size(); i++) {
+		if (s[i] != ' ') {
+			t.push_back(s[i]);
+		} else {
+			res.push_back(t);
+			t = "";
+		}
+	}
+	res.push_back(t);
+	return res;
+}
+
 ListNode* createListNode_rear(string s) {
 	vector<int> v = stringToVector_int(s);
 	ListNode* head = new ListNode();
@@ -133,4 +148,13 @@ TreeNode* createTree(string s) {
 		}
 	}
 	return tv[0];
+}
+
+bool findChar(string s, char c) {
+	for (int i = 0; i < s.size(); i++) {
+		if (s[i] == c) {
+			return 1;
+		}
+	}
+	return 0;
 }

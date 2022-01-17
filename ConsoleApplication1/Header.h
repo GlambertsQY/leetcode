@@ -33,6 +33,12 @@ void mergeLinkList(ListNode* h1, ListNode* h2);
 int getNumOfDigits(int nums);
 TreeNode* createTree(string s);
 vector<int> stringToVector_int(string s);
+vector<string> stringToVector_string(string s);
+
+//278. First Bad Version
+bool isBadVersion(int version);
+
+bool findChar(string s, char c);
 
 #endif // !leetcode
 
