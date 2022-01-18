@@ -1132,30 +1132,252 @@ public:
     }
 
     //350. Intersection of Two Arrays II
+    //相同元素，map记录出现次数
+    //map遍历
     vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
         vector<int> res = {};
-        map<int, int> m;
+        map<int, int> m1, m2;
         for (int i = 0; i < nums1.size(); i++) {
-            m[nums1[i]] = -1;
+            if (m1.find(nums1[i]) == m1.end()) {
+                m1[nums1[i]] = 1;
+            } else {
+                m1[nums1[i]]++;
+            }
         }
         for (int i = 0; i < nums2.size(); i++) {
-            if (m.find(nums2[i]) != m.end()) {
-                res.push_back(nums2[i]);
+            if (m1.find(nums2[i]) != m1.end()) {
+                if (m2.find(nums2[i]) == m2.end()) {
+                    m2[nums2[i]] = 1;
+                } else {
+                    m2[nums2[i]]++;
+                }
+            }
+        }
+
+        for (map<int,int>::iterator it = m2.begin(); it != m2.end(); it++) {
+            int j = m1[it->first] >= m2[it->first] ? m2[it->first] : m1[it->first];
+            while (j != 0) {
+                res.push_back(it->first);
+                j--;
             }
         }
         return res;
     }
+
+    //367. Valid Perfect Square
+    bool isPerfectSquare(int num) {
+        int low = 0, high = num;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int n = pow(mid, 2);
+            if (n == num) {
+                return 1;
+            } else if (n > num) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return 0;
+    }
+
+    //374. Guess Number Higher or Lower
+    //二分
+    int guessNumber(int n) {
+        int l = 1, h = n;
+        while (l <= n) {
+            int mid = l + (h - l) / 2;
+            int r = guess(mid);
+            if (r == 0) {
+                return mid;
+            } else if (r==-1) {
+                l = mid + 1;
+            } else {
+                h = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    //383. Ransom Note
+    //小写字母：数组计数
+    bool canConstruct(string ransomNote, string magazine) {
+        int arr[26] = {};
+        for (int i = 0; i < 26; i++) {
+            arr[i] = 0;
+        }
+        for (int i = 0; i < magazine.size(); i++) {
+            arr[magazine[i] - 'a']++;
+        }
+        for (int i = 0; i < ransomNote.size(); i++) {
+            arr[ransomNote[i] - 'a']--;
+            if (arr[ransomNote[i] - 'a'] < 0) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    //387. First Unique Character in a String
+    //小写字母：数组计数
+    int firstUniqChar(string s) {
+        int arr[26] = {};
+        for (int i = 0; i < 26; i++) {
+            arr[i] = 0;
+        }
+        for (int i = 0; i < s.size(); i++) {
+            arr[s[i] - 'a']++;
+        }
+        for (int i = 0; i < s.size(); i++) {
+            if (arr[s[i] - 'a'] == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //389. Find the Difference
+    //小写字母：数组计数,
+    char findTheDifference(string s, string t) {
+        int arr[26] = {};
+        int arr2[26] = {};
+        for (int i = 0; i < 26; i++) {
+            arr[i] = 0;
+        }
+        for (int i = 0; i < 26; i++) {
+            arr2[i] = 0;
+        }
+        for (int i = 0; i < s.size(); i++) {
+            arr[s[i] - 'a']++;
+        }
+        for (int i = 0; i < t.size(); i++) {
+            arr2[t[i] - 'a']++;
+        }
+        for (int i = 0; i < 26; i++) {
+            if (arr[i] != arr2[i]) {
+                char c = 'a' + i;
+                return c;
+            }
+        }
+        return '#';
+    }
+
+    //位运算
+    char findTheDifference2(string s, string t) {
+            string ss = s + t;
+            int  res = 0;
+            for (int i = 0; i < ss.size(); i++) {
+                res ^= ss[i];
+            }
+            return res;
+    }
+
+    //392. Is Subsequence
+    bool isSubsequence(string s, string t) {
+        int i = 0, j = 0;
+        while (i < s.size() && j < t.size()) {
+            if (s[i] == t[j]) {
+                i++;
+                j++;
+            } else {
+                j++;
+            }
+        }
+        if (i == s.size()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //401. Binary Watch
+    //所有时间结果，找turnedOn
+    //number of 1 in binary: ____builtin_popcount()
+    vector<string> readBinaryWatch(int turnedOn) {
+        vector<string> res = {};
+        for (int h = 0; h < 12; ++h) {
+            for (int m = 0; m < 60; ++m) {
+                if (__popcnt(h) + __popcnt(m) == turnedOn) {
+                    res.push_back(to_string(h) + ":" + (m < 10 ? "0" : "") + to_string(m));
+                }
+            }
+        }
+        return res;
+    }
+
+    //404. Sum of Left Leaves
+    int sum_404 = 0;
+    void func_404(TreeNode* root, int isLeft) {
+        if (root == NULL) {
+            return;
+        }
+        if (root->left == NULL && root->right == NULL && isLeft) {
+            sum_404 += root->val;
+        }
+        func_404(root->left, 1);
+        func_404(root->right, 0);
+    }
+    int sumOfLeftLeaves(TreeNode* root) {
+        func_404(root, 0);
+        return sum_404;
+    }
+
+    //405. Convert a Number to Hexadecimal
+    //负数：先转unsigned
+    string toHex(int num) {
+        if (num == 0) {
+            return "0";
+        }
+        string res = "";
+        unsigned n = num;
+        while (n!=0) {
+            int t = n % 16;
+            if (t <= 9) {
+                res.insert(res.begin(), to_string(t)[0]);
+            } else {
+                res.insert(res.begin(), 'a' + t - 10);
+            }
+            n /= 16;
+        }
+        return res;
+    }
+
+    //409. Longest Palindrome
+    int longestPalindrome(string s) {
+        int res = 0;
+        map<int, int> m;
+        for (int i = 0; i < s.size(); i++) {
+            if (m.find(s[i]) == m.end()) {
+                m[s[i]] = 1;
+            } else {
+                m[s[i]]++;
+            }
+        }
+        int numOfOdd = 0;
+        for (map<int, int>::iterator it = m.begin(); it != m.end(); it++) {
+            if (it->second % 2 == 0) {
+                res += it->second;
+            } else {
+                res += it->second / 2;
+                numOfOdd++;
+            }
+        }
+        if (numOfOdd != 0) {
+            res++;
+        }
+        return res;
+    }
+
+    //412. Fizz Buzz
+    vector<string> fizzBuzz(int n) {
+        vector<string> vs = { "FizzBuzz","Fizz","Buzz" }, res = {};
+
+    }
 };
 
-
-
-
-
-
-
 int main() {
-    vector<int> v1 = { 2,2,1 };
-    vector<int> v2 = { 2,5,6 };
+    vector<int> v1 = { 1,2,2,1 };
+    vector<int> v2 = { 2,2 };
     vector<int> v = { -2, 0, 3, -5, 2, -1 };
     ListNode* h1 = createListNode_rear("1,1");
     ListNode* h2 = createListNode_rear("5,6");
@@ -1166,6 +1388,6 @@ int main() {
     TreeNode* head = createTree("37,-34,-48,null,-100,-100,48,null,null,null,null,-54,null,-71,-22,null,null,null,8");
     TreeNode* p1 = new TreeNode(4);
     TreeNode* p2 = new TreeNode(7);
-    v = s.countBits(2);
+    s.toHex(-1);
     return 0;
 }

@@ -40,5 +40,8 @@ bool isBadVersion(int version);
 
 bool findChar(string s, char c);
 
+//374. Guess Number Higher or Lower
+int guess(int num);
+
 #endif // !leetcode
 
