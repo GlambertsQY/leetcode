@@ -158,3 +158,13 @@ bool findChar(string s, char c) {
 	}
 	return 0;
 }
+
+int getMin(vector<int> nums) {
+	int min = INT32_MAX;
+	for (int i = 0; i < nums.size(); i++) {
+		if (nums[i] < min) {
+			min = nums[i];
+		}
+	}
+	return min;
+}

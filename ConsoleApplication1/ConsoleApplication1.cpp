@@ -1,12 +1,7 @@
 ﻿// ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include <string>
-#include<vector>
-#include<limits>
-#include<cmath>
-#include<map>
+
 #include"Header.h"
 using namespace std;
 
@@ -1371,14 +1366,157 @@ public:
     //412. Fizz Buzz
     vector<string> fizzBuzz(int n) {
         vector<string> vs = { "FizzBuzz","Fizz","Buzz" }, res = {};
+        for (int i = 1; i <= n; i++) {
+            if (i % 3 != 0 && i % 5 != 0) {
+                res.push_back(to_string(i));
+            }
+            if (i % 3 == 0 && i % 5 != 0) {
+                res.push_back(vs[1]);
+            }
+            if (i % 3 != 0 && i % 5 == 0) {
+                res.push_back(vs[2]);
+            }
+            if (i % 3 == 0 && i % 5 == 0) {
+                res.push_back(vs[0]);
+            }
+        }
+        return res;
+    }
+
+    //414. Third Maximum Number
+    //map反向遍历: reverse_iterator, rbdgin(), rend()
+    int thirdMax(vector<int>& nums) {
+        map<int, int> m;
+        for (int i = 0; i < nums.size(); i++) {
+            m[nums[i]] = -1;
+        }
+        int sum = 1;
+        for (map<int, int>::reverse_iterator it = m.rbegin(); it != m.rend(); it++) {
+            if (sum == 3) {
+                return it->first;
+            }
+            sum++;
+        }
+        return (--m.end())->first;
+    }
+
+    //415. Add Strings
+    string addStrings(string num1, string num2) {
+        int c = 0;
+        string res = "";
+        int l1 = num1.size(), l2 = num2.size();
+        if (l1 > l2) {
+            for (int i = 0; i < l1 - l2; i++) {
+                num2.insert(num2.begin(), '0');
+            }
+        } else {
+            for (int i = 0; i < l2 - l1; i++) {
+                num1.insert(num1.begin(), '0');
+            }
+        }
+        for (int i = num1.size() - 1; i >= 0; i--) {
+            int t = num1[i] - '0' + num2[i] - '0' + c;
+            string s = to_string(t);
+            c = t >= 10 ? 1 : 0;
+            res.insert(res.begin(), s[s.size() - 1]);
+        }
+        if (c == 1) {
+            res.insert(res.begin(), '1');
+        }
+        return res;
+    }
+
+    //434. Number of Segments in a String
+    //考虑单词/考虑空格
+    int countSegments(string s) {
+        if (s.size() == 0) {
+            return 0;
+        }
+        int res = 0;
+        int len = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (len != 0 && s[i] == ' ') {
+                res++;
+                len = 0;
+            }
+            if (s[i] != ' ') {
+                len = 1;
+            }
+        }
+        if (len == 1) {
+            res++;
+        }
+        return res;
+    }
+
+    //441. Arranging Coins
+    int arrangeCoins(int n) {
+        for (int i = 1; i <= n; i++) {
+            int t = (pow(i, 2) + i) / 2;
+            if (t > n) {
+                return i - t + n;
+            }
+            if (t == n) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //448. Find All Numbers Disappeared in an Array
+    //nums[i - 1] + n;找未大于n的数
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        vector<int> res = {};
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            nums[(nums[i] - 1) % n] += n;  //+n，取余数，则不会越界，且能保持原数组元素下标作用。
+        }
+        for (int i = 0; i < n; i++) {
+            if (nums[i] <= n) {
+                res.push_back(i + 1);
+            }
+        }
+        return res;
+    }
+
+    //453. Minimum Moves to Equal Array Elements
+    //n-1个数+1 = 1个数-1
+    int minMoves(vector<int>& nums) {
+        int res = 0;
+        int min = getMin(nums);
+        for (int i = 0; i < nums.size(); i++) {
+            res += nums[i] - min;
+        }
+        return res;
+    }
+
+    //455. Assign Cookies
+    //贪心算法
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+        int res = 0;
+        int i = 0, j = 0;
+        while (i < g.size() && j < s.size()) {
+            if (s[j] >= g[i]) {
+                res++;
+                i++;
+            }
+            j++;
+        }
+        return res;
+    }
+
+    //459. Repeated Substring Pattern
+    bool repeatedSubstringPattern(string s) {
 
     }
 };
 
 int main() {
-    vector<int> v1 = { 1,2,2,1 };
-    vector<int> v2 = { 2,2 };
-    vector<int> v = { -2, 0, 3, -5, 2, -1 };
+    vector<int> v1 = { 10,9,8,7 };
+    vector<int> v2 = { 5,6,7,8 };
+    vector<int> v = { 4,3,2,7,8,2,3,1 };
     ListNode* h1 = createListNode_rear("1,1");
     ListNode* h2 = createListNode_rear("5,6");
     mergeLinkList(h1, h2);
@@ -1388,6 +1526,6 @@ int main() {
     TreeNode* head = createTree("37,-34,-48,null,-100,-100,48,null,null,null,null,-54,null,-71,-22,null,null,null,8");
     TreeNode* p1 = new TreeNode(4);
     TreeNode* p2 = new TreeNode(7);
-    s.toHex(-1);
+    s.findContentChildren(v1, v2);
     return 0;
 }

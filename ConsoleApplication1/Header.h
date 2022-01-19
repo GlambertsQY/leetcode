@@ -1,8 +1,11 @@
 #pragma once
-#include<string>
-#include<iostream>
+#include <iostream>
+#include <string>
 #include<vector>
+#include<limits>
 #include<cmath>
+#include<map>
+#include<algorithm>
 using namespace std;
 #ifndef leetcode
 
@@ -42,6 +45,8 @@ bool findChar(string s, char c);
 
 //374. Guess Number Higher or Lower
 int guess(int num);
+
+int getMin(vector<int> nums);
 
 #endif // !leetcode
 
