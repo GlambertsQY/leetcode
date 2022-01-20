@@ -51,7 +51,7 @@ vector<string> stringToVector_string(string s) {
 	vector<string> res = {};
 	string t = "";
 	for (int i = 0; i < s.size(); i++) {
-		if (s[i] != ' ') {
+		if (s[i] != ' ' && s[i] != '-') {
 			t.push_back(s[i]);
 		} else {
 			res.push_back(t);
@@ -167,4 +167,16 @@ int getMin(vector<int> nums) {
 		}
 	}
 	return min;
+}
+
+string UIntToBin(int n) {
+	string res = "";
+	if (n == 0) {
+		return "0";
+	}
+	while (n!=0) {
+		res.insert(res.begin(), to_string(n % 2)[0]);
+		n /= 2;
+	}
+	return res;
 }

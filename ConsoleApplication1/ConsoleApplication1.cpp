@@ -1508,7 +1508,145 @@ public:
     }
 
     //459. Repeated Substring Pattern
+    //枚举，类似希尔排序，固定长度（长度=substring.size()）
+    //kmp
     bool repeatedSubstringPattern(string s) {
+        int n = s.size();
+        for (int i = 1; i * 2 <= n; ++i) {
+            if (n % i == 0) {
+                bool match = true;
+                for (int j = i; j < n; ++j) {
+                    if (s[j] != s[j - i]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //461. Hamming Distance
+    int hammingDistance(int x, int y) {
+        string s = UIntToBin(x ^ y);
+        int res = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == '1') {
+                res++;
+            }
+        }
+        return res;
+    }
+
+    //463. Island Perimeter
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int nx = grid.size(), ny = grid[0].size(), res = 0;
+        for (int i = 0; i < nx; i++) {
+            for (int j = 0; j < ny; j++) {
+                if (grid[i][j] == 1) {
+                    int sum = 4;
+                    if (i != 0) {
+                        if (grid[i - 1][j] == 1) {
+                            sum--;
+                        }
+                    }
+                    if (i != nx - 1) {
+                        if (grid[i + 1][j] == 1) {
+                            sum--;
+                        }
+                    }
+                    if (j != 0) {
+                        if (grid[i][j - 1] == 1) {
+                            sum--;
+                        }
+                    }
+                    if (j != ny - 1) {
+                        if (grid[i][j + 1] == 1) {
+                            sum--;
+                        }
+                    }
+                    res += sum;
+                }
+            }
+        }
+        return res;
+    }
+
+    //476. Number Complement
+    //异或，再移位
+    int findComplement(int num) {
+        string s = UIntToBin(num);
+        int n = s.size();
+        int res = pow(2, n) - 1;
+        res ^= num;
+        return res;
+    }
+
+    //482. License Key Formatting
+    //从末尾开始
+    string licenseKeyFormatting(string s, int k) {
+        string ans;
+        int cnt = 0;
+
+        for (int i = s.size() - 1; i >= 0; i--) {
+            if (s[i] != '-') {
+                ans.push_back(toupper(s[i]));   //toupper()转大写
+                cnt++;
+                if (cnt % k == 0) {
+                    ans.push_back('-');
+                }
+            }
+        }
+        if (ans.size() > 0 && ans.back() == '-') {
+            ans.pop_back();
+        }
+        reverse(ans.begin(), ans.end());
+
+        return ans;
+    }
+
+    //485. Max Consecutive Ones
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int max = 0;
+        int l = 0, r = 0;
+        nums.insert(nums.begin(), 0);
+        nums.push_back(0);
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == 0) {
+                l = r;
+                r = i;
+                if (r - l > max) {
+                    max = r - l;
+                }
+            }
+        }
+        return max - 1;
+    }
+
+    //492. Construct the Rectangle
+    vector<int> constructRectangle(int area) {
+        int l = sqrt(area), h = area;
+        vector<int> res = {};
+        for (int i = l; i <= h; i++) {
+            if (area % i == 0) {
+                if (area / i > i) {
+                    res.push_back(area / i);
+                    res.push_back(i);
+                } else {
+                    res.push_back(i);
+                    res.push_back(area / i);
+                }
+                return res;
+            }
+        }
+        return res;
+    }
+
+    //495. Teemo Attacking
+    int findPoisonedDuration(vector<int>& timeSeries, int duration) {
 
     }
 };
@@ -1516,7 +1654,7 @@ public:
 int main() {
     vector<int> v1 = { 10,9,8,7 };
     vector<int> v2 = { 5,6,7,8 };
-    vector<int> v = { 4,3,2,7,8,2,3,1 };
+    vector<int> v = { 1,0,1,1,0,1 };
     ListNode* h1 = createListNode_rear("1,1");
     ListNode* h2 = createListNode_rear("5,6");
     mergeLinkList(h1, h2);
@@ -1526,6 +1664,7 @@ int main() {
     TreeNode* head = createTree("37,-34,-48,null,-100,-100,48,null,null,null,null,-54,null,-71,-22,null,null,null,8");
     TreeNode* p1 = new TreeNode(4);
     TreeNode* p2 = new TreeNode(7);
-    s.findContentChildren(v1, v2);
+    vector<vector<int>> grid = { {1,0} };
+    s.findMaxConsecutiveOnes(v);
     return 0;
 }

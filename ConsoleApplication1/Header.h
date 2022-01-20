@@ -48,5 +48,7 @@ int guess(int num);
 
 int getMin(vector<int> nums);
 
+string UIntToBin(int n);
+
 #endif // !leetcode
 
