@@ -180,3 +180,13 @@ string UIntToBin(int n) {
 	}
 	return res;
 }
+
+void mReverse(string& s, int l, int h) {
+	while (l < h) {
+		char t = s[l];
+		s[l] = s[h];
+		s[h] = t;
+		l++; 
+		h--;
+	}
+}

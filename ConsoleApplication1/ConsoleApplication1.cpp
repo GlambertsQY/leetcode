@@ -1841,7 +1841,244 @@ public:
 	}
 
 	//520. Detect Capital
+	bool isCapital(char c) {
+		return c <= 'Z' && c >= 'A' ? 1 : 0;
+	}
+
 	bool detectCapitalUse(string word) {
+		int numOfCapital = 0;
+		for (int i = 0; i < word.size(); i++) {
+			if (isCapital(word[i])) {
+				numOfCapital++;
+			}
+		}
+		if (!(numOfCapital == word.size() || numOfCapital == 1 || numOfCapital == 0)) {
+			return 0;
+		}
+		if (numOfCapital == 1) {
+			if (!isCapital(word[0])) {
+				return 0;
+			}
+		}
+		return 1;
+	}
+
+	//521. Longest Uncommon Subsequence I
+	int findLUSlength(string a, string b) {
+		if (a == b) {
+			return -1;
+		}
+		return a.size() >= b.size() ? a.size() : b.size();
+	}
+
+	//530. Minimum Absolute Difference in BST
+	int preNum_530 = -1;
+	int min_530 = INT32_MAX;
+	void func_530(TreeNode* root) {
+		if (root == NULL) {
+			return;
+		}
+		func_530(root->left);
+		if (preNum_530 == -1) {
+			preNum_530 = root->val;
+		} else {
+			if (abs(preNum_530 - root->val) < min_530) {
+				min_530 = abs(preNum_530 - root->val);
+			}
+			preNum_530 = root->val;
+		}
+		func_530(root->right);
+	}
+
+	int getMinimumDifference(TreeNode* root) {
+		func_530(root);
+		return min_530;
+	}
+
+	//541. Reverse String II
+	string reverseStr(string s, int k) {
+		int i = 0;
+		if (k > s.size()) {
+			mReverse(s, i, s.size() - 1);
+		} else {
+			while (i < s.size()) {
+				if (i + k - 1 < s.size()) {
+					mReverse(s, i, i + k - 1);
+				} else {
+					mReverse(s, i, s.size() - 1);
+				}
+				i += 2 * k;
+			}
+		}
+		return s;
+	}
+
+	//543. Diameter of Binary Tree
+	int max_534 = 0;
+
+	//直接return，为树高
+	int depth_543(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = depth_543(root->left);
+		int r = depth_543(root->right);
+		if (l + r > max_534) {
+			max_534 = l + r;
+		}
+		return (l > r ? l : r) + 1;
+	}
+
+	int diameterOfBinaryTree(TreeNode* root) {
+		int depth = depth_543(root);
+		return max_534;
+	}
+
+	//551. Student Attendance Record I
+	bool checkRecord(string s) {
+		int numOfA = 0;
+		for (int i = 0; i < s.size(); i++) {
+			if (s[i] == 'A') {
+				numOfA++;
+				if (numOfA == 2) {
+					return 0;
+				}
+			} else {
+				if (s[i] == 'L') {
+					int sum = 0;
+					while (s[i] == 'L') {
+						sum++;
+						if (sum == 3) {
+							return 0;
+						}
+						i++;
+					}
+					i--;
+				}
+			}
+		}
+		return 1;
+	}
+
+	//557. Reverse Words in a String III
+	string reverseWords(string s) {
+		int preIndex = 0;
+		for (int i = 0; i < s.size(); i++) {
+			if (s[i] == ' ') {
+				mReverse(s, preIndex, i - 1);
+				preIndex = i + 1;
+			}
+		}
+		mReverse(s, preIndex, s.size() - 1);
+		return s;
+	}
+
+	//559. Maximum Depth of N-ary Tree
+	//由树高扩展
+	int maxDepth(Node* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int maxDep = 0;
+		for (int i = 0; i < root->children.size(); i++) {
+			int childDepth = maxDepth(root->children[i]);
+			maxDep = childDepth > maxDep ? childDepth : maxDep;
+		}
+		return maxDep + 1;
+	}
+
+	//561. Array Partition I
+	int arrayPairSum(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
+		int sum = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			sum += nums[i] < nums[i + 1] ? nums[i] : nums[i + 1];
+			i++;
+		}
+		return sum;
+	}
+
+	//563. Binary Tree Tilt
+	//递归理解:后根
+	int sum_563 = 0;
+
+	int dfs_563(TreeNode* root) {
+		if (root == NULL) {
+			return 0;
+		}
+		int l = dfs_563(root->left);
+		int r = dfs_563(root->right);
+		sum_563 += abs(l - r);
+		return l + r + root->val;
+	}
+
+	int findTilt(TreeNode* root) {
+		dfs_563(root);
+		return sum_563;
+	}
+
+	//566. Reshape the Matrix
+	//vector分配好空间，直接push，可自动换行
+	vector<vector<int>> matrixReshape(vector<vector<int>>& mat, int r, int c) {
+		int x = mat[0].size(), y = mat.size();
+		if (x * y != r * c) {
+			return mat;
+		}
+		vector<vector<int>> res = { };
+		int index = 0;
+		for (int i = 0; i < r; i++) {
+			vector<int> t = {};
+			for (int j = 0; j < c; j++) {
+				t.push_back(mat[index / x][index % x]);
+				index++;
+			}
+			res.push_back(t);
+		}
+		return res;
+	}
+
+	//572. Subtree of Another Tree
+	bool isSame_572 = 0;
+
+	bool isSameTree_572(TreeNode* t1, TreeNode* t2) {
+		/*
+		* if (t1->val == t2->val || (t1==NULL&&t2==NULL)) {
+			return 1;
+		} else {
+			return 0;
+		}
+		将导致，直接return
+		*/
+
+		if (!t1 && !t2) {
+			return 1;
+		}
+		if ((t1 && !t2) || (!t1 && t2) || (t1->val != t2->val)) {
+			return 0;
+		}
+		return isSameTree_572(t1->left, t2->left) && isSameTree_572(t1->right, t2->right);
+	}
+
+	void dfs_572(TreeNode* root, TreeNode* subRoot) {
+		if (root == NULL) {
+			return;
+		}
+		if (root->val == subRoot->val) {
+			if (isSame_572 != 1) {
+				isSame_572 = isSameTree_572(root, subRoot);
+			}
+		}
+		dfs_572(root->left, subRoot);
+		dfs_572(root->right, subRoot);
+	}
+
+	bool isSubtree(TreeNode* root, TreeNode* subRoot) {
+		dfs_572(root, subRoot);
+		return isSame_572;
+	}
+
+	//575. Distribute Candies
+	int distributeCandies(vector<int>& candyType) {
 
 	}
 };
@@ -1853,7 +2090,9 @@ int main() {
 	vector<string> vs = { "Hello","Alaska","Dad","Peace" };
 	Solution s;
 	int n = 0b1011;
-	TreeNode* root = createTree("1,null,2,null,null,2,2");
-	s.fib_nr(4);
+	TreeNode* root1 = createTree("3,4,5,1,2,null,null,null,null,0");
+	TreeNode* root2 = createTree("4,1,2");
+	vector<vector<int>> vv = { {1,2},{3,4} };
+	s.isSubtree(root1, root2);
 	return 0;
 }
