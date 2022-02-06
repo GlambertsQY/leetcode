@@ -2079,7 +2079,15 @@ public:
 
 	//575. Distribute Candies
 	int distributeCandies(vector<int>& candyType) {
-
+		unordered_map<int, int> um;
+		for (int i = 0; i < candyType.size(); i++) {
+			um[candyType[i]] == -1;
+		}
+		int dif = 0;
+		for (unordered_map<int, int>::iterator it = um.begin(); it != um.end(); it++) {
+			dif++;
+		}
+		return candyType.size() / 2 > dif ? dif : candyType.size() / 2;
 	}
 };
 
